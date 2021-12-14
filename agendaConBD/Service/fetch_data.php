@@ -1,88 +1,61 @@
 <?php
 
 /**
- * Clase dónde estara toda la  lógica
+ * En esta clase, es dónde se encuentra la lógica de la agenda
  */
 class FetchData{
-    private $conn;
-    public $name_column = 'name';
-    public $phone_column = 'phone_number';
     
+    private $conn;
+    /**
+    * Creamos un constructor, que tendrá como parámetro la conexión a la Base dee Datos, esta conexión la obtendremos en agenda.php
+     */
     public function __construct($db){
         $this->conn = $db;
     }
 
+
     /**
-     * Comprueba si existe la base de datos, si no existe la creara
-     */
-    function checkDB(){
-        $qrdb = "SELECT COUNT(*)
-                FROM INFORMATION_SCHEMA.SCHEMATA 
-                WHERE SCHEMA_NAME = 'agendaDB'";
-        $data = $this->conn->prepare($qrdb);
-        $data->execute();
-        $numdb = $data->fetchAll();
-        foreach($numdb as $k=>$v){
-            $key_value_db = $v[$k];
-
-            if($key_value_db == 1){
-    
-            }else {
-                $qr_create_db = "CREATE DATABASE agendadb";
-                $qr_ex_db = $this->conn->prepare($qr_create_db);
-                $qr_ex_db->execute();
-            }
-        }
-    }
-    
-    /**
-     * Comprueba si existe la tabla, si no existe la creara
-     */
-    function checkTable() {
-        $qrtb = "SHOW TABLES LIKE 'contacts'";
-        $table_check_qr = $this->conn->prepare($qrtb);
-        $table_check_qr->execute();
-        $numtb = $table_check_qr->fetchAll();
-
-            if(count($numtb) == 1){
-            }else {
-                $qr_create_tb =  "USE agendaDB; " . 
-                                "CREATE TABLE IF NOT EXISTS contacts (
-                                    contact_id INT AUTO_INCREMENT PRIMARY KEY,
-                                    name VARCHAR(255) NOT NULL,
-                                    phone_number VARCHAR(255) NOT NULL
-                                    )";
-                $qr_ex_tb = $this->conn->prepare($qr_create_tb);
-                $qr_ex_tb->execute();
-            }
-        }
-
-        /**Esta funcion se encarga de obtener todo los datos i meter-los en un array asociativo */
+    * Esta funcion se encarga de obtener todos los datos y meter-los en un array asociativo, como parámetro le pasaremos el
+    * array asociativo que habíamos definido en agenda.php, pero este lo pasaremos por referencia, para que
+    * cuando obtenga los contactos desde la db, pueda modificar el array original y estén disponibles en agenda.php
+    */
     function getData(&$result) {
         $qr_check_name = "SELECT name,phone_number
         FROM contacts";
         $check_qr_ex = $this->conn->prepare($qr_check_name);
         $check_qr_ex->execute();
         $result = $check_qr_ex->fetchAll();
-        $tt = array_unique($result, SORT_REGULAR);
 
+
+        // $contacts_arr = array_unique($result, SORT_REGULAR);
+        /**
+        * al obtener los datos desde postgres, el resultado que obtenemos es array de arrays,
+        * para poder simplificar-lo y obtener clave-valor, utilizamos un metodo que se llama 'array_colunm'
+        * que el primer parámetro es el array, el segundo parámetro es el valor para el array asociativo
+        * y finalmente el tercer valor, es la clave para el array asociativo
+        */
         $column_key = 'phone_number';
         $index_key = 'name';
-        $first_names =array_column($tt, $column_key, $index_key);
+        $first_names =array_column($result, $column_key, $index_key);
         $result = $first_names;
         return $result;
     }
 /**
- * Esta funcion permite añadir valores a la db
+ * Esta funcion permite añadir valores a la DB
  */
     function add($k,$v){
 
         try{
-        $add_qr = "USE agendadb; " .
-                    "INSERT INTO contacts(name,phone_number)
-        VALUES(:name_value,:phone_value)";
+        $add_qr = 
+                "INSERT INTO contacts(name,phone_number)
+                    VALUES(:name_value,:phone_value)";
         $add_ex_qr = $this->conn->prepare($add_qr);
 
+        /**
+        * En la query de arriba podemos observar que está el ':name_value' y el ':phone_value', estos no tienen ningún
+        * valor en sí, para poder especificar-le un valor utilizamos el bindParam, que básicamente le indicamos cual será
+        * su valor
+        */
         $add_ex_qr->bindParam(':name_value',$k);
         $add_ex_qr->bindParam(':phone_value',$v);
         $add_ex_qr->execute();  
@@ -93,10 +66,10 @@ class FetchData{
     }
 
     /**
-     * permite hacer update a la db
+     * Esta funcion permite hacer el update a los contactos
      */
     function update($k,$v){
-        $upd_qr = "USE agendadb; " .
+        $upd_qr =
                 "UPDATE contacts 
                 SET 
                     phone_number = :phone_value
@@ -110,23 +83,28 @@ class FetchData{
     }
 
     /**
-     * permite eliminar en db
+     * Esta funcion permite eliminar contactos
      */
     function delete($k){
-        $upd_qr = "USE agendadb; " .
-        "DELETE FROM contacts 
-            WHERE
-                name = :name_value";
+        $upd_qr =
+                "DELETE FROM contacts 
+                 WHERE
+                    name = :name_value";
         $upd_ex_qr = $this->conn->prepare($upd_qr);
         $upd_ex_qr->bindParam(':name_value',$k);
         $upd_ex_qr->execute();  
     }
     
     /**
-     * muestra los datos
+     * Esta funcion muestra los contactos que hay en la Base de datos
      * 
      */
     function showData($arr){
+    /**
+    * '$arr', hace referencia al array asociativo, cont todos los contactos que hay en la base de datos
+    * comprueba que la base de datos no este vacío, sino esta vacío, con un foreach puedo mostrar el nombre(clave),
+    * y el teléfono móvil(valor)
+    */
         $len_arr = count($arr);
         if($len_arr == 0){
             echo "Agenda Vacia";
@@ -141,8 +119,8 @@ class FetchData{
     }
 
     /**
-     * elinimna todo
-     */
+    * Esta funcion permite eliminar todo los contactos que hay en la base de datos
+    */
     
     function deleteAll(){
         $upd_qr = "truncate contacts";
