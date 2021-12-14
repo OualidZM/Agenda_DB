@@ -8,13 +8,14 @@ class Databasee{
     private $user  = "ozaaj";
     private $dbpass = "abc123.";
     private $dbname = "agendadb";
+    private $puerto = '5432';
     public $conn;
     
     public function connection(){
         $this->conn = null;
 
         try {
-            $this->conn = new PDO("pgsql:host=" . $this->host . ";dbname=" . $this->dbname, $this->user,$this->dbpass);
+            $this->conn = new PDO("pgsql:host=" . $this->host . ";port" . $this->puerto .";dbname=" . $this->dbname, $this->user,$this->dbpass);
 
         }catch(PDOException $error) {
             echo "Can't connect: " . $error->getMessage();
