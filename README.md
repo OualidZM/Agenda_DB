@@ -2,7 +2,7 @@
 
 In this PHP practice, we needed to make a contact list with a connection to the database (postgres), and be able to do CRUD (Create, Read, Update, Delete).
 
-## First step
+## Configuration to the Databases
 
 We need to add the configuration that will allow us to connect to the database, this file will be located in:
 
@@ -24,8 +24,12 @@ Then we need to create the table contacts:
     name VARCHAR(255) NOT NULL,
     phone_number VARCHAR(255) NOT NULL
     )
-<!-- ## Third step
+## Third step
 
-after having the database and the table created, we can then start to use our contacts App through this link: -->
+after having the database and the table created, we can then start to use our contacts App through this link:
 
-<!-- http://ozaaj.ifc33b.cifpfbmoll.eu/Agenda_DB/agendaConBD/agenda.php -->
+http://ozaaj.ifc33b.cifpfbmoll.eu/Agenda_DB/agendaConBD/agenda.php
+
+If we want to use it in another database, we need to change the configuration in:
+
+    Database\bd.php
