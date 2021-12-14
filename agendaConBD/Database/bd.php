@@ -15,7 +15,7 @@ class Databasee{
         $this->conn = null;
 
         try {
-            $this->conn = new PDO("pgsql:host=" . $this->host . ";port" . $this->puerto .";dbname=" . $this->dbname, $this->user,$this->dbpass);
+            $this->conn = new PDO("pgsql:host=" . $this->host . ";port=" . $this->puerto .";dbname=" . $this->dbname, $this->user,$this->dbpass);
 
         }catch(PDOException $error) {
             echo "Can't connect: " . $error->getMessage();
