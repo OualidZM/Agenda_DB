@@ -5,8 +5,8 @@ class Databasee{
 
     
     private $host = "localhost";
-    private $user  = "postgres";
-    private $dbpass = "postgrespg";
+    private $user  = "ozaaj_usr";
+    private $dbpass = "abc123.";
     private $dbname = "agendadb";
     public $conn;
     
