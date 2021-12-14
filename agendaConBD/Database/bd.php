@@ -4,7 +4,7 @@
 class Databasee{
 
     
-    private $host = "g1.ifc33b.cifpfbmoll.eu";
+    private $host = "ozaaj.ifc33b.cifpfbmoll.eu";
     private $user  = "ozaaj";
     private $dbpass = "abc123.";
     private $dbname = "agendadb";
