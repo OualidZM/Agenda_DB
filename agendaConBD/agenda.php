@@ -18,8 +18,9 @@
         include_once "./Service/fetch_data.php";
 
     /**
-    * Ahora que ya están importados, lo que hago es instanciar las clases 'Databasee' y 'FetchData'
-    * luego llamo al método connection(), para obtener la conexión con la Base de datos
+    * Ahora que ya están importados, lo que hago es instanciar la clase 'Databasee' obtener el metodo 'connection()',
+    *este metodo será el que nos permitirá obtener la conexion con la db, seguidamente instanciamos
+    * la clase 'FetchData' y a este objecto le pasamos como parámetro la conexión a la db
     *
     */
 
@@ -28,20 +29,14 @@
     $get_data = new FetchData($connn);
 
     /**
-    * Compruebo que la base de datos existen, si no existen las creara, en cambio si existe no hace nada
+    * Creamos un array asociativo, la key será el nombre y el valor será el número de teléfono
     */
-    $get_data->checkDB();
-    $get_data->checkTable();
-
-    /**
-     * Creo un array asociativo
-     */
     $name_arr_values = [];
 
     /**
     * este método, obtendrá los datos existentes en la base de datos, como parámetro le pasamos un
-    * array, ya que la información que se recibirá desde mysql, se almacenara en el array, el
-    * nombre será la clave y el número de teléfono será el valor
+    * array, (el array asociativo que declaramos arriba), ya que la información que se recibirá desde postrgres,
+    * se almacenara en este
     */
     $get_data->getData($name_arr_values);
 
@@ -60,18 +55,19 @@
  
             
             /**
-             * si el nombre esta vacío, entonces retornara un error
+             * si el nombre está vacío, entonces retornara un error
              */
             if(empty($name)){
                 echo "<p class=" . "redd" . "> You need to add a Name </p>";
                 header('Refresh: 2; URL=./agenda.php');
             }
 
-        /**
-        * si el usuario no introdujo el número móvil, entonces se eliminara de la
-        * base de datos, pero antes de que se elimine, se comprobara que exista,
-        * esto lo podemos hacer con el método array_key_exists, si no existe retorna un error
-        */
+    /**
+    * si el usuario no introdujo el número móvil, entonces se eliminara de la
+    * base de datos, pero antes de que se elimine, se comprobara que exista,
+    * esto lo podemos hacer con el método 'array_key_exists' para comprovar si existe la key que se está buscando
+    * si no existe retorna un error
+    */
             elseif(empty($phone)){ //delete
                 if(array_key_exists($name,$name_arr_values)){ //check if exists in db
                     $get_data->delete($name);
@@ -88,9 +84,9 @@
     /**
     * Si el usuario introdujo el nombre y el número móvil, esto significa o bien
     * que quiere añadir un contacto más a la base de datos, o es que quiere hacer
-    * un upate al contacto, para esto utilizamos de nuevo el método array_key_exists
-    * para saber si existe el contacto en la base de datos, si existe se hace un upate
-    * si no se añade
+    * un, upate al contacto, para esto utilizamos de nuevo el método 'array_key_exists'
+    * para saber si existe la key en el array asociativo, si existe se hace un, upate
+    * si no, se añade
     */
                 elseif(array_key_exists($name,$name_arr_values) && !empty($phone)){//update
                 $get_data->update($name,$phone);
@@ -98,7 +94,8 @@
                 header('Refresh: 2; URL=./agenda.php');
 
             }
-            else{//add
+
+            else{
 
                 $get_data->add($name,$phone);
 
@@ -108,11 +105,12 @@
             }
         }
 
-        /**
-         * Si el usuario clicka el boton Eliminar todos los contactos, entonces lo primero que se hace
-         * es comprobar que existan usuarios, con el count(), si este no es 0 se eliminan todos, si
-         * es 0, se muestra un error
-         */
+    /**
+    * Si el usuario clica el botón 'Eliminar todos los contactos', entonces lo primero que se hace
+    * es comprobar que el array asociativo no este vacío, esto lo hacemos con él con el count(),
+    * si el count no es igual a 0 entonces se eliminan todos, en cambio, si
+    * es 0, se muestra un mensaje de que no hay contactos
+    */
         if(isset($_GET['destroy'])){
             if(count($name_arr_values) == 0){
                 echo "<p class=" . "nothingToDelete" . "> La agenda ya esta vacia </p>";
@@ -138,10 +136,9 @@
 <div class="agendaStyle">
 
 <?php
-/**
- * Este metodo muestra los resultados por pantalla, recorriendo el array
- */
-
+    /**
+    * Para poder mostrar los contactos que existen en el array, utilizamos el metodo showData, que está en la clase 'FetchData'
+    */
 $get_data->showData($name_arr_values);
 
 ?>
