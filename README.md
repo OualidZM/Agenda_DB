@@ -1,6 +1,6 @@
 # Agenda Con Base de Datos
 
-In this PHP practice, we needed to make a contact list with a connection to the database (postgres), and be able to do CRUD (Create, Read, Update, Deleat).
+In this PHP practice, we needed to make a contact list with a connection to the database (postgres), and be able to do CRUD (Create, Read, Update, Delete).
 
 ## First step
 
