@@ -5,7 +5,7 @@ class Databasee{
 
     
     private $host = "localhost";
-    private $user  = "ozaaj_usr";
+    private $user  = "ozaaj";
     private $dbpass = "abc123.";
     private $dbname = "agendadb";
     public $conn;
